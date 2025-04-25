@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 
-// キャラクターの状態を表す画像の配列と音声ファイルを追加
+// キャラクターの状態を表す画像の配列と音声ファイルを修正
 const characterStages = [
   {
     id: "child",
@@ -17,7 +17,7 @@ const characterStages = [
     alt: "子供の状態",
     threshold: 0,
     audioSrc: "/sounds/child.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "こんにちは！タスクを頑張ろうね！",
+    audioText: "なにしてんの？",
   },
   {
     id: "student",
@@ -25,7 +25,7 @@ const characterStages = [
     alt: "学生の状態",
     threshold: 0.2,
     audioSrc: "/sounds/student.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "勉強も大事だけど、タスク管理も大切だよ！",
+    audioText: "どこ見とん？",
   },
   {
     id: "healthy",
@@ -33,7 +33,7 @@ const characterStages = [
     alt: "健康な状態",
     threshold: 0.5,
     audioSrc: "/sounds/healthy.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "順調に成長してるね！このまま頑張ろう！",
+    audioText: "絶対に許さん",
   },
   {
     id: "very-healthy",
@@ -41,7 +41,7 @@ const characterStages = [
     alt: "とても健康な状態",
     threshold: 0.8,
     audioSrc: "/sounds/very_healthy.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "あと少しでゴールだよ！最後まで頑張って！",
+    audioText: "謝っても遅いんやからな",
   },
   {
     id: "wedding",
@@ -49,7 +49,7 @@ const characterStages = [
     alt: "結婚式",
     threshold: 1.0,
     audioSrc: "/sounds/wedding.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "おめでとう！全てのタスクを完了したね！",
+    audioText: "本気ってそんなもんなん？",
   },
   {
     id: "death",
@@ -57,7 +57,7 @@ const characterStages = [
     alt: "墓石",
     threshold: -0.5,
     audioSrc: "/sounds/death.mp3", // 実際の音声ファイルへのパスに置き換えてください
-    audioText: "タスクを忘れないでね...",
+    audioText: "本気ってそんなもんなん？",
   },
 ]
 
@@ -94,7 +94,7 @@ export default function TodoApp() {
   const characterAudioRef = useRef<HTMLAudioElement | null>(null)
   const [isMuted, setIsMuted] = useState(false)
 
-  // キャラクター状態更新ロジック
+  // キャラクター状態更新ロジックを修正
   useEffect(() => {
     if (todos.length === 0) {
       setCharacterStage(characterStages[0]) // 子供の状態
@@ -105,6 +105,12 @@ export default function TodoApp() {
     const completedTasks = todos.filter((todo) => todo.completed)
     const completedCount = completedTasks.length
     const completionRate = completedCount / todos.length
+
+    // 達成率が0%の場合はお墓の状態に
+    if (todos.length > 0 && completionRate === 0) {
+      setCharacterStage(characterStages[5]) // 墓石
+      return
+    }
 
     // 未完了のタスクが多すぎる場合は「死亡」状態に
     if (todos.length > 5 && completionRate < 0.2) {
@@ -119,7 +125,7 @@ export default function TodoApp() {
     }
 
     // 完了率に基づいて適切なステージを選択
-    if (completionRate >= 0 && completionRate < 0.2) {
+    if (completionRate > 0 && completionRate < 0.2) {
       setCharacterStage(characterStages[0]) // 子供の状態
     } else if (completionRate >= 0.2 && completionRate < 0.5) {
       setCharacterStage(characterStages[1]) // 学生の状態
