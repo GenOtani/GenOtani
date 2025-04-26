@@ -538,7 +538,7 @@ export default function TodoApp() {
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/PCpfXIvs1uk?start=0&end=5&autoplay=1"
+                  src="https://www.youtube.com/embed/PCpfXIvs1uk?autoplay=1"
                   title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -546,7 +546,7 @@ export default function TodoApp() {
                 ></iframe>
               </div>
               <div className="p-4 text-center">
-                <p className="text-sm text-gray-500">※著作権の関係で実際の動画は短い時間のみ再生されます</p>
+                <p className="text-sm text-gray-500">おめでとうございます！特別な動画をお楽しみください</p>
                 <Button className="mt-2" onClick={closeYoutubeVideo}>
                   閉じる
                 </Button>
