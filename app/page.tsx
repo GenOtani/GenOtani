@@ -62,7 +62,7 @@ const characterStages = [
   // 新しいステージを追加
   {
     id: "angry",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_1.jpg-L3itBA8oXfs9h7ISMXjCRyusIjf2C9.jpeg", // 適切な画像に置き換えてください
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_3.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "怒りの状態",
     threshold: 0.3,
     audioSrc: "/sounds/angry.mp3",
@@ -70,7 +70,7 @@ const characterStages = [
   },
   {
     id: "poison",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_2.jpg-igdOpsyytyvRkiDPO0M2vgQEKt4C0i.jpeg", // 適切な画像に置き換えてください
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_4.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "毒の状態",
     threshold: 0.4,
     audioSrc: "/sounds/poison.mp3",
@@ -78,11 +78,52 @@ const characterStages = [
   },
   {
     id: "genius",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_13.jpg-NPZORK3Fw2vzFBKvRRHRnZpysq51XX.jpeg", // 適切な画像に置き換えてください
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_5.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "天才の状態",
     threshold: 0.6,
     audioSrc: "/sounds/genius.mp3",
     audioText: "天才もたまげるわ",
+  },
+  // さらに追加の写真
+  {
+    id: "surprised",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_6.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
+    alt: "驚きの状態",
+    threshold: 0.35,
+    audioSrc: "/sounds/surprised.mp3",
+    audioText: "えっ！？何それ！",
+  },
+  {
+    id: "happy",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_7.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
+    alt: "幸せな状態",
+    threshold: 0.7,
+    audioSrc: "/sounds/happy.mp3",
+    audioText: "うれしいなぁ〜",
+  },
+  {
+    id: "confused",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_9.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
+    alt: "混乱した状態",
+    threshold: 0.25,
+    audioSrc: "/sounds/confused.mp3",
+    audioText: "なんでやねん",
+  },
+  {
+    id: "sleepy",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_10.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
+    alt: "眠い状態",
+    threshold: 0.15,
+    audioSrc: "/sounds/sleepy.mp3",
+    audioText: "眠いわぁ",
+  },
+  {
+    id: "excited",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_12.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
+    alt: "興奮した状態",
+    threshold: 0.9,
+    audioSrc: "/sounds/excited.mp3",
+    audioText: "わくわくするなぁ！",
   },
 ]
 
@@ -142,6 +183,9 @@ export default function TodoApp() {
   const [sixTasksCompleted, setSixTasksCompleted] = useState(false)
   const [sevenTasksCompleted, setSevenTasksCompleted] = useState(false)
 
+  // 達成順序を追跡するための状態
+  const [completionOrder, setCompletionOrder] = useState<string[]>([])
+
   // キャラクター状態更新ロジック
   useEffect(() => {
     if (todos.length === 0) {
@@ -196,6 +240,30 @@ export default function TodoApp() {
       return
     }
 
+    // 達成順序に基づいてキャラクターを選択
+    if (completionOrder.length > 0) {
+      const lastCompletedId = completionOrder[completionOrder.length - 1]
+      const lastCompletedIndex = todos.findIndex((todo) => todo.id === lastCompletedId)
+
+      // 最後に完了したタスクのインデックスに基づいて異なる写真を表示
+      if (lastCompletedIndex % 5 === 0) {
+        setCharacterStage(characterStages[9]) // 驚きの状態
+        return
+      } else if (lastCompletedIndex % 5 === 1) {
+        setCharacterStage(characterStages[10]) // 幸せな状態
+        return
+      } else if (lastCompletedIndex % 5 === 2) {
+        setCharacterStage(characterStages[11]) // 混乱した状態
+        return
+      } else if (lastCompletedIndex % 5 === 3) {
+        setCharacterStage(characterStages[12]) // 眠い状態
+        return
+      } else if (lastCompletedIndex % 5 === 4) {
+        setCharacterStage(characterStages[13]) // 興奮した状態
+        return
+      }
+    }
+
     // 完了率に基づいて適切なステージを選択
     if (completionRate > 0 && completionRate < 0.2) {
       setCharacterStage(characterStages[0]) // 子供の状態
@@ -212,7 +280,7 @@ export default function TodoApp() {
     } else if (completionRate >= 0.8) {
       setCharacterStage(characterStages[3]) // とても健康な状態
     }
-  }, [todos])
+  }, [todos, completionOrder])
 
   // 連続する完了タスクの数を取得する関数
   const getConsecutiveCompletedTasks = (todoList: Todo[]) => {
@@ -440,11 +508,30 @@ export default function TodoApp() {
 
   // ToDoの完了状態を切り替え
   const toggleTodo = (id: string) => {
-    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, completed: !todo.completed } : todo)))
+    const updatedTodos = todos.map((todo) => {
+      if (todo.id === id) {
+        const newCompleted = !todo.completed
+
+        // 完了状態になった場合、達成順序に追加
+        if (newCompleted && !todo.completed) {
+          setCompletionOrder((prev) => [...prev, id])
+        } else if (!newCompleted && todo.completed) {
+          // 未完了に戻した場合、達成順序から削除
+          setCompletionOrder((prev) => prev.filter((todoId) => todoId !== id))
+        }
+
+        return { ...todo, completed: newCompleted }
+      }
+      return todo
+    })
+
+    setTodos(updatedTodos)
   }
 
   // ToDoを削除
   const deleteTodo = (id: string) => {
+    // 達成順序からも削除
+    setCompletionOrder((prev) => prev.filter((todoId) => todoId !== id))
     setTodos(todos.filter((todo) => todo.id !== id))
   }
 
@@ -485,7 +572,7 @@ export default function TodoApp() {
   return (
     <div className="flex flex-col min-h-screen bg-amber-50">
       <header className="bg-amber-100 p-4 shadow-sm">
-        <h1 className="text-2xl font-bold text-center text-amber-800">ToDoおめんめ</h1>
+        <h1 className="text-2xl font-bold text-center text-amber-800">ToDoお女ん々</h1>
       </header>
 
       <main className="flex-1 p-4 flex flex-col items-center max-w-md mx-auto w-full">
@@ -576,7 +663,7 @@ export default function TodoApp() {
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                ></iframe>
+                />
               </div>
               <div className="p-4 text-center">
                 <p className="text-sm text-gray-500">おめでとうございます！特別な動画をお楽しみください</p>

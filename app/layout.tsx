@@ -5,8 +5,9 @@ import { Inter } from "next/font/google"
 
 const inter = Inter({ subsets: ["latin"] })
 
+// メタデータのタイトルを変更
 export const metadata: Metadata = {
-  title: "ToDoおめんめ",
+  title: "ToDoお女ん々",
   description: "タスクをこなして女の子を成長させよう！",
     generator: 'v0.dev'
 }
