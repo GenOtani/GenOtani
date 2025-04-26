@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
+import { useLocalStorage } from "../hooks/use-local-storage"
+import { StorageResetButton } from "../components/storage-reset-button"
 
 // キャラクターの状態を表す画像の配列と音声ファイルを拡張
 const characterStages = [
@@ -155,18 +157,19 @@ const youtubeVideos = {
   sevenTasks: "https://www.youtube.com/embed/Oww5_qOtg2E?autoplay=1",
 }
 
-// ToDoアイテムの型定義
+// 日付の復元のために、Todo型定義を更新
 interface Todo {
   id: string
   text: string
   completed: boolean
-  createdAt: Date
+  createdAt: string | Date // 文字列またはDate型を許容
   audioUrl?: string
   audioDuration?: number
 }
 
 export default function TodoApp() {
-  const [todos, setTodos] = useState<Todo[]>([])
+  // ローカルストレージを使用するように状態を変更
+  const [todos, setTodos] = useLocalStorage<Todo[]>("todos", [])
   const [newTodo, setNewTodo] = useState("")
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
@@ -186,7 +189,7 @@ export default function TodoApp() {
   // キャラクター音声関連の状態
   const [isCharacterSpeaking, setIsCharacterSpeaking] = useState(false)
   const characterAudioRef = useRef<HTMLAudioElement | null>(null)
-  const [isMuted, setIsMuted] = useState(false)
+  const [isMuted, setIsMuted] = useLocalStorage<boolean>("isMuted", false)
 
   // 連続クリック検出用の状態
   const [clickCount, setClickCount] = useState(0)
@@ -198,12 +201,40 @@ export default function TodoApp() {
   const [sixTasksCompleted, setSixTasksCompleted] = useState(false)
   const [sevenTasksCompleted, setSevenTasksCompleted] = useState(false)
 
-  // 達成順序を追跡するための状態
-  const [completionOrder, setCompletionOrder] = useState<string[]>([])
+  // 達成順序を追跡するための状態（ローカルストレージ対応）
+  const [completionOrder, setCompletionOrder] = useLocalStorage<string[]>("completionOrder", [])
 
-  // 病気状態を追跡するための状態
-  const [healthState, setHealthState] = useState<"healthy" | "sick" | "very-sick" | "recovering">("healthy")
+  // 病気状態を追跡するための状態（ローカルストレージ対応）
+  const [healthState, setHealthState] = useLocalStorage<"healthy" | "sick" | "very-sick" | "recovering">(
+    "healthState",
+    "healthy",
+  )
+
+  // 最後のタスク完了時間をローカルストレージに保存
+  const [lastCompletionTime, setLastCompletionTime] = useLocalStorage<number>("lastCompletionTime", Date.now())
   const lastCompletionTimeRef = useRef<number>(Date.now())
+
+  // 最後のタスク完了時間の参照を同期
+  useEffect(() => {
+    lastCompletionTimeRef.current = lastCompletionTime
+  }, [lastCompletionTime])
+
+  // useEffectを追加して、ローカルストレージから読み込んだ日付文字列をDate型に変換
+  // キャラクター状態更新ロジックのuseEffectの前に追加
+  useEffect(() => {
+    // ローカルストレージから読み込んだTodoの日付文字列をDate型に変換
+    if (todos.length > 0) {
+      const updatedTodos = todos.map((todo) => ({
+        ...todo,
+        createdAt: todo.createdAt instanceof Date ? todo.createdAt : new Date(todo.createdAt),
+      }))
+
+      // 変換後のTodosで状態を更新（無限ループを防ぐために比較）
+      if (JSON.stringify(updatedTodos) !== JSON.stringify(todos)) {
+        setTodos(updatedTodos)
+      }
+    }
+  }, [])
 
   // キャラクター状態更新ロジック
   useEffect(() => {
@@ -574,7 +605,9 @@ export default function TodoApp() {
         // 完了状態になった場合、達成順序に追加し、最終完了時間を更新
         if (newCompleted && !todo.completed) {
           setCompletionOrder((prev) => [...prev, id])
-          lastCompletionTimeRef.current = Date.now()
+          const now = Date.now()
+          lastCompletionTimeRef.current = now
+          setLastCompletionTime(now)
         } else if (!newCompleted && todo.completed) {
           // 未完了に戻した場合、達成順序から削除
           setCompletionOrder((prev) => prev.filter((todoId) => todoId !== id))
@@ -632,7 +665,10 @@ export default function TodoApp() {
   return (
     <div className="flex flex-col min-h-screen bg-amber-50">
       <header className="bg-amber-100 p-4 shadow-sm">
-        <h1 className="text-2xl font-bold text-center text-amber-800">ToDoお女ん々</h1>
+        <div className="flex items-center justify-between max-w-md mx-auto">
+          <h1 className="text-2xl font-bold text-center text-amber-800">ToDoお女ん々</h1>
+          <StorageResetButton />
+        </div>
       </header>
 
       <main className="flex-1 p-4 flex flex-col items-center max-w-md mx-auto w-full">
@@ -664,7 +700,7 @@ export default function TodoApp() {
             size="icon"
             className="absolute top-3 left-3 bg-white/80 hover:bg-white border-amber-200"
             onClick={(e) => {
-              e.stopPropagation() // クリックイベントの伝播を停止
+              e.stopPropagation()
               toggleMute()
             }}
           >
