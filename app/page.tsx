@@ -90,6 +90,13 @@ const characterStages = [
 const specialMessages = {
   touchTooMuch: "そんな触んなや",
   sixTasksCompleted: "おめでとう！6つのタスクを完了しました！",
+  sevenTasksCompleted: "おめでとう！7つのタスクを完了しました！",
+}
+
+// YouTube動画のURL
+const youtubeVideos = {
+  sixTasks: "https://www.youtube.com/embed/PCpfXIvs1uk?autoplay=1",
+  sevenTasks: "https://www.youtube.com/embed/Oww5_qOtg2E?autoplay=1",
 }
 
 // ToDoアイテムの型定義
@@ -131,7 +138,9 @@ export default function TodoApp() {
 
   // YouTube動画関連の状態
   const [showYoutubeVideo, setShowYoutubeVideo] = useState(false)
+  const [currentYoutubeVideo, setCurrentYoutubeVideo] = useState("")
   const [sixTasksCompleted, setSixTasksCompleted] = useState(false)
+  const [sevenTasksCompleted, setSevenTasksCompleted] = useState(false)
 
   // キャラクター状態更新ロジック
   useEffect(() => {
@@ -148,8 +157,13 @@ export default function TodoApp() {
     // 6つのタスクが完了したかチェック
     if (completedCount === 6) {
       setSixTasksCompleted(true)
+      setSevenTasksCompleted(false)
+    } else if (completedCount === 7) {
+      setSixTasksCompleted(false)
+      setSevenTasksCompleted(true)
     } else {
       setSixTasksCompleted(false)
+      setSevenTasksCompleted(false)
     }
 
     // 達成率が0%の場合はお墓の状態に
@@ -252,8 +266,16 @@ export default function TodoApp() {
       characterAudioRef.current = null
     }
 
+    // 7つのタスクが完了している場合、YouTube動画を表示
+    if (sevenTasksCompleted) {
+      setCurrentYoutubeVideo(youtubeVideos.sevenTasks)
+      setShowYoutubeVideo(true)
+      return
+    }
+
     // 6つのタスクが完了している場合、YouTube動画を表示
     if (sixTasksCompleted) {
+      setCurrentYoutubeVideo(youtubeVideos.sixTasks)
       setShowYoutubeVideo(true)
       return
     }
@@ -463,7 +485,7 @@ export default function TodoApp() {
   return (
     <div className="flex flex-col min-h-screen bg-amber-50">
       <header className="bg-amber-100 p-4 shadow-sm">
-        <h1 className="text-2xl font-bold text-center text-amber-800">成長するToDoリスト</h1>
+        <h1 className="text-2xl font-bold text-center text-amber-800">ToDoおめんめ</h1>
       </header>
 
       <main className="flex-1 p-4 flex flex-col items-center max-w-md mx-auto w-full">
@@ -522,6 +544,13 @@ export default function TodoApp() {
               6タスク達成！
             </div>
           )}
+
+          {/* 7つのタスクが完了した場合に表示するバッジ */}
+          {sevenTasksCompleted && (
+            <div className="absolute top-3 right-3 bg-amber-600 text-white rounded-full px-2 py-1 text-xs font-bold">
+              7タスク達成！
+            </div>
+          )}
         </div>
 
         {/* YouTube動画モーダル */}
@@ -529,7 +558,11 @@ export default function TodoApp() {
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-lg overflow-hidden max-w-2xl w-full">
               <div className="p-4 flex justify-between items-center border-b">
-                <h3 className="font-bold">おめでとう！6つのタスクを完了しました！</h3>
+                <h3 className="font-bold">
+                  {sevenTasksCompleted
+                    ? "おめでとう！7つのタスクを完了しました！"
+                    : "おめでとう！6つのタスクを完了しました！"}
+                </h3>
                 <Button variant="ghost" size="icon" onClick={closeYoutubeVideo}>
                   <X className="h-5 w-5" />
                 </Button>
@@ -538,7 +571,7 @@ export default function TodoApp() {
                 <iframe
                   width="100%"
                   height="100%"
-                  src="https://www.youtube.com/embed/PCpfXIvs1uk?autoplay=1"
+                  src={currentYoutubeVideo}
                   title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -564,6 +597,7 @@ export default function TodoApp() {
                 {completedCount}/{todos.length} 完了
                 {isWeddingConditionMet && " 🎉"}
                 {sixTasksCompleted && " 🏆"}
+                {sevenTasksCompleted && " 🌟"}
               </span>
             </div>
             <div className="w-full bg-amber-100 rounded-full h-2.5">
