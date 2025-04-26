@@ -9,14 +9,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 
-// キャラクターの状態を表す画像の配列と音声ファイルを修正
+// キャラクターの状態を表す画像の配列と音声ファイルを拡張
 const characterStages = [
   {
     id: "child",
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_1.jpg-L3itBA8oXfs9h7ISMXjCRyusIjf2C9.jpeg",
     alt: "子供の状態",
     threshold: 0,
-    audioSrc: "/sounds/child.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/child.mp3",
     audioText: "なにしてんの？",
   },
   {
@@ -24,7 +24,7 @@ const characterStages = [
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_2.jpg-igdOpsyytyvRkiDPO0M2vgQEKt4C0i.jpeg",
     alt: "学生の状態",
     threshold: 0.2,
-    audioSrc: "/sounds/student.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/student.mp3",
     audioText: "どこ見とん？",
   },
   {
@@ -32,7 +32,7 @@ const characterStages = [
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_13.jpg-NPZORK3Fw2vzFBKvRRHRnZpysq51XX.jpeg",
     alt: "健康な状態",
     threshold: 0.5,
-    audioSrc: "/sounds/healthy.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/healthy.mp3",
     audioText: "絶対に許さん",
   },
   {
@@ -40,7 +40,7 @@ const characterStages = [
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_11.jpg-HdInipJjwrjH4bIEcsd7E6FepeS8N8.jpeg",
     alt: "とても健康な状態",
     threshold: 0.8,
-    audioSrc: "/sounds/very_healthy.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/very_healthy.mp3",
     audioText: "謝っても遅いんやからな",
   },
   {
@@ -48,7 +48,7 @@ const characterStages = [
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_8.jpg-xUUTLfmK37MbDEtJtFJVHHRQV9m5F7.jpeg",
     alt: "結婚式",
     threshold: 1.0,
-    audioSrc: "/sounds/wedding.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/wedding.mp3",
     audioText: "本気ってそんなもんなん？",
   },
   {
@@ -56,10 +56,41 @@ const characterStages = [
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_14.jpg-usoKXIzcAf3DaXxUU1fkdBHkhb4duT.jpeg",
     alt: "墓石",
     threshold: -0.5,
-    audioSrc: "/sounds/death.mp3", // 実際の音声ファイルへのパスに置き換えてください
+    audioSrc: "/sounds/death.mp3",
     audioText: "本気ってそんなもんなん？",
   },
+  // 新しいステージを追加
+  {
+    id: "angry",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_1.jpg-L3itBA8oXfs9h7ISMXjCRyusIjf2C9.jpeg", // 適切な画像に置き換えてください
+    alt: "怒りの状態",
+    threshold: 0.3,
+    audioSrc: "/sounds/angry.mp3",
+    audioText: "だからなんやねん",
+  },
+  {
+    id: "poison",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_2.jpg-igdOpsyytyvRkiDPO0M2vgQEKt4C0i.jpeg", // 適切な画像に置き換えてください
+    alt: "毒の状態",
+    threshold: 0.4,
+    audioSrc: "/sounds/poison.mp3",
+    audioText: "毒やん",
+  },
+  {
+    id: "genius",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_13.jpg-NPZORK3Fw2vzFBKvRRHRnZpysq51XX.jpeg", // 適切な画像に置き換えてください
+    alt: "天才の状態",
+    threshold: 0.6,
+    audioSrc: "/sounds/genius.mp3",
+    audioText: "天才もたまげるわ",
+  },
 ]
+
+// 特別なメッセージ
+const specialMessages = {
+  touchTooMuch: "そんな触んなや",
+  sixTasksCompleted: "おめでとう！6つのタスクを完了しました！",
+}
 
 // ToDoアイテムの型定義
 interface Todo {
@@ -94,7 +125,15 @@ export default function TodoApp() {
   const characterAudioRef = useRef<HTMLAudioElement | null>(null)
   const [isMuted, setIsMuted] = useState(false)
 
-  // キャラクター状態更新ロジックを修正
+  // 連続クリック検出用の状態
+  const [clickCount, setClickCount] = useState(0)
+  const lastClickTimeRef = useRef<number>(0)
+
+  // YouTube動画関連の状態
+  const [showYoutubeVideo, setShowYoutubeVideo] = useState(false)
+  const [sixTasksCompleted, setSixTasksCompleted] = useState(false)
+
+  // キャラクター状態更新ロジック
   useEffect(() => {
     if (todos.length === 0) {
       setCharacterStage(characterStages[0]) // 子供の状態
@@ -105,6 +144,13 @@ export default function TodoApp() {
     const completedTasks = todos.filter((todo) => todo.completed)
     const completedCount = completedTasks.length
     const completionRate = completedCount / todos.length
+
+    // 6つのタスクが完了したかチェック
+    if (completedCount === 6) {
+      setSixTasksCompleted(true)
+    } else {
+      setSixTasksCompleted(false)
+    }
 
     // 達成率が0%の場合はお墓の状態に
     if (todos.length > 0 && completionRate === 0) {
@@ -124,26 +170,92 @@ export default function TodoApp() {
       return
     }
 
+    // 連続するタスクの完了状態をチェック
+    const consecutiveCompletedTasks = getConsecutiveCompletedTasks(todos)
+
+    // 連続する完了タスクに基づいてキャラクターを選択
+    if (consecutiveCompletedTasks >= 3) {
+      setCharacterStage(characterStages[8]) // 天才の状態
+      return
+    } else if (consecutiveCompletedTasks === 2) {
+      setCharacterStage(characterStages[7]) // 毒の状態
+      return
+    }
+
     // 完了率に基づいて適切なステージを選択
     if (completionRate > 0 && completionRate < 0.2) {
       setCharacterStage(characterStages[0]) // 子供の状態
-    } else if (completionRate >= 0.2 && completionRate < 0.5) {
+    } else if (completionRate >= 0.2 && completionRate < 0.3) {
       setCharacterStage(characterStages[1]) // 学生の状態
-    } else if (completionRate >= 0.5 && completionRate < 0.8) {
+    } else if (completionRate >= 0.3 && completionRate < 0.4) {
+      setCharacterStage(characterStages[6]) // 怒りの状態
+    } else if (completionRate >= 0.4 && completionRate < 0.5) {
+      setCharacterStage(characterStages[7]) // 毒の状態
+    } else if (completionRate >= 0.5 && completionRate < 0.6) {
       setCharacterStage(characterStages[2]) // 健康な状態
+    } else if (completionRate >= 0.6 && completionRate < 0.8) {
+      setCharacterStage(characterStages[8]) // 天才の状態
     } else if (completionRate >= 0.8) {
       setCharacterStage(characterStages[3]) // とても健康な状態
     }
   }, [todos])
 
+  // 連続する完了タスクの数を取得する関数
+  const getConsecutiveCompletedTasks = (todoList: Todo[]) => {
+    // 作成日時でソート
+    const sortedTodos = [...todoList].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+
+    let maxConsecutive = 0
+    let currentConsecutive = 0
+
+    for (const todo of sortedTodos) {
+      if (todo.completed) {
+        currentConsecutive++
+        maxConsecutive = Math.max(maxConsecutive, currentConsecutive)
+      } else {
+        currentConsecutive = 0
+      }
+    }
+
+    return maxConsecutive
+  }
+
   // キャラクターの音声を再生する関数
   const playCharacterVoice = () => {
     if (isMuted) return
+
+    // 現在の時間を取得
+    const now = Date.now()
+
+    // 連続クリックの検出
+    if (now - lastClickTimeRef.current < 2000) {
+      // 2秒以内のクリック
+      setClickCount((prev) => prev + 1)
+
+      // 3回連続でクリックされた場合
+      if (clickCount >= 2) {
+        playSpecialMessage(specialMessages.touchTooMuch)
+        setClickCount(0)
+        lastClickTimeRef.current = 0
+        return
+      }
+    } else {
+      // 時間が経過していたらリセット
+      setClickCount(1)
+    }
+
+    lastClickTimeRef.current = now
 
     // 現在再生中の音声があれば停止
     if (characterAudioRef.current) {
       characterAudioRef.current.pause()
       characterAudioRef.current = null
+    }
+
+    // 6つのタスクが完了している場合、YouTube動画を表示
+    if (sixTasksCompleted) {
+      setShowYoutubeVideo(true)
+      return
     }
 
     // 実際の音声ファイルがない場合は、Web Speech APIを使用してテキストを読み上げる
@@ -169,6 +281,26 @@ export default function TodoApp() {
     }
   }
 
+  // 特別なメッセージを再生する関数
+  const playSpecialMessage = (message: string) => {
+    if (isMuted) return
+
+    // 現在再生中の音声があれば停止
+    if (characterAudioRef.current) {
+      characterAudioRef.current.pause()
+      characterAudioRef.current = null
+    }
+
+    // Web Speech APIを使用してテキストを読み上げる
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(message)
+      utterance.lang = "ja-JP"
+      utterance.onstart = () => setIsCharacterSpeaking(true)
+      utterance.onend = () => setIsCharacterSpeaking(false)
+      speechSynthesis.speak(utterance)
+    }
+  }
+
   // キャラクターの音声を停止する関数
   const stopCharacterVoice = () => {
     if ("speechSynthesis" in window) {
@@ -189,6 +321,11 @@ export default function TodoApp() {
       stopCharacterVoice()
     }
     setIsMuted(!isMuted)
+  }
+
+  // YouTube動画を閉じる関数
+  const closeYoutubeVideo = () => {
+    setShowYoutubeVideo(false)
   }
 
   // 音声録音を開始する関数
@@ -378,7 +515,45 @@ export default function TodoApp() {
               <p className="text-center font-bold">おめでとう！すべてのタスクを完了しました！</p>
             </div>
           )}
+
+          {/* 6つのタスクが完了した場合に表示するバッジ */}
+          {sixTasksCompleted && (
+            <div className="absolute top-3 right-3 bg-amber-600 text-white rounded-full px-2 py-1 text-xs font-bold">
+              6タスク達成！
+            </div>
+          )}
         </div>
+
+        {/* YouTube動画モーダル */}
+        {showYoutubeVideo && (
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg overflow-hidden max-w-2xl w-full">
+              <div className="p-4 flex justify-between items-center border-b">
+                <h3 className="font-bold">おめでとう！6つのタスクを完了しました！</h3>
+                <Button variant="ghost" size="icon" onClick={closeYoutubeVideo}>
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+              <div className="aspect-video w-full">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/PCpfXIvs1uk?start=0&end=5&autoplay=1"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+              <div className="p-4 text-center">
+                <p className="text-sm text-gray-500">※著作権の関係で実際の動画は短い時間のみ再生されます</p>
+                <Button className="mt-2" onClick={closeYoutubeVideo}>
+                  閉じる
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 進捗状況 */}
         {todos.length > 0 && (
@@ -388,6 +563,7 @@ export default function TodoApp() {
               <span>
                 {completedCount}/{todos.length} 完了
                 {isWeddingConditionMet && " 🎉"}
+                {sixTasksCompleted && " 🏆"}
               </span>
             </div>
             <div className="w-full bg-amber-100 rounded-full h-2.5">
