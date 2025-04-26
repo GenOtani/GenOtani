@@ -12,24 +12,56 @@ import { Badge } from "@/components/ui/badge"
 // キャラクターの状態を表す画像の配列と音声ファイルを拡張
 const characterStages = [
   {
-    id: "child",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_1.jpg-L3itBA8oXfs9h7ISMXjCRyusIjf2C9.jpeg",
-    alt: "子供の状態",
+    id: "baby",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_15.jpg-uUOfp2CrdnqmCffQWUtIGr9QF34Zhx.jpeg",
+    alt: "赤ちゃんの状態",
     threshold: 0,
     audioSrc: "/sounds/child.mp3",
     audioText: "なにしてんの？",
   },
   {
-    id: "student",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_2.jpg-igdOpsyytyvRkiDPO0M2vgQEKt4C0i.jpeg",
-    alt: "学生の状態",
-    threshold: 0.2,
-    audioSrc: "/sounds/student.mp3",
+    id: "child",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_9.jpg-h43DfCxzn5pqAqrtwECkPcobZ7C84k.jpeg",
+    alt: "子供の状態",
+    threshold: 0.1,
+    audioSrc: "/sounds/child.mp3",
     audioText: "どこ見とん？",
   },
   {
+    id: "student",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_16.jpg-a84yPZf149Yk7oFMJkSvQxkH2XGKwy.jpeg",
+    alt: "学生の状態",
+    threshold: 0.2,
+    audioSrc: "/sounds/student.mp3",
+    audioText: "なんでやねん",
+  },
+  {
+    id: "sick",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_10.jpg-XUHlSphiJI1rbdO8qFGRgSbFqrgnYM.jpeg",
+    alt: "病気の状態",
+    threshold: 0.3,
+    audioSrc: "/sounds/sick.mp3",
+    audioText: "気分悪い…",
+  },
+  {
+    id: "very-sick",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_4.jpg-ujxpVtn6QBxYIoy0hPjwZMfbeBgPj9.jpeg",
+    alt: "重症の状態",
+    threshold: -0.3,
+    audioSrc: "/sounds/very_sick.mp3",
+    audioText: "もう無理…",
+  },
+  {
+    id: "recovery",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_12.jpg-eJxSsGiGx33rjMoHr5ByVLeUEDTpLr.jpeg",
+    alt: "回復中の状態",
+    threshold: 0.4,
+    audioSrc: "/sounds/recovery.mp3",
+    audioText: "よくなってきた",
+  },
+  {
     id: "healthy",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_13.jpg-NPZORK3Fw2vzFBKvRRHRnZpysq51XX.jpeg",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_13.jpg-UyLmZ8wZHLOumZDojkeYzqdoGQKaIa.jpeg",
     alt: "健康な状態",
     threshold: 0.5,
     audioSrc: "/sounds/healthy.mp3",
@@ -37,7 +69,7 @@ const characterStages = [
   },
   {
     id: "very-healthy",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_11.jpg-HdInipJjwrjH4bIEcsd7E6FepeS8N8.jpeg",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_11.jpg-CVDPJCXtPq6PeHQEVKNUmZz1p9abWz.jpeg",
     alt: "とても健康な状態",
     threshold: 0.8,
     audioSrc: "/sounds/very_healthy.mp3",
@@ -45,7 +77,7 @@ const characterStages = [
   },
   {
     id: "wedding",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_8.jpg-xUUTLfmK37MbDEtJtFJVHHRQV9m5F7.jpeg",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_8.jpg-BkoBBbPMx63v88j1cIUbmvXyLCRv5J.jpeg",
     alt: "結婚式",
     threshold: 1.0,
     audioSrc: "/sounds/wedding.mp3",
@@ -53,18 +85,18 @@ const characterStages = [
   },
   {
     id: "death",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_14.jpg-usoKXIzcAf3DaXxUU1fkdBHkhb4duT.jpeg",
+    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_14.jpg-aBz9Jw5yZ2IjjH80I6ZOgzlhbRaC6a.jpeg",
     alt: "墓石",
     threshold: -0.5,
     audioSrc: "/sounds/death.mp3",
     audioText: "本気ってそんなもんなん？",
   },
-  // 新しいステージを追加
+  // 保留していた既存の段階も残しておきます
   {
     id: "angry",
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_3.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "怒りの状態",
-    threshold: 0.3,
+    threshold: 0.35,
     audioSrc: "/sounds/angry.mp3",
     audioText: "だからなんやねん",
   },
@@ -72,7 +104,7 @@ const characterStages = [
     id: "poison",
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_4.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "毒の状態",
-    threshold: 0.4,
+    threshold: 0.45,
     audioSrc: "/sounds/poison.mp3",
     audioText: "毒やん",
   },
@@ -84,12 +116,11 @@ const characterStages = [
     audioSrc: "/sounds/genius.mp3",
     audioText: "天才もたまげるわ",
   },
-  // さらに追加の写真
   {
     id: "surprised",
     src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_6.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
     alt: "驚きの状態",
-    threshold: 0.35,
+    threshold: 0.38,
     audioSrc: "/sounds/surprised.mp3",
     audioText: "えっ！？何それ！",
   },
@@ -100,22 +131,6 @@ const characterStages = [
     threshold: 0.7,
     audioSrc: "/sounds/happy.mp3",
     audioText: "うれしいなぁ〜",
-  },
-  {
-    id: "confused",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_9.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
-    alt: "混乱した状態",
-    threshold: 0.25,
-    audioSrc: "/sounds/confused.mp3",
-    audioText: "なんでやねん",
-  },
-  {
-    id: "sleepy",
-    src: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LINE_ALBUM_%E5%A5%B3_250426_10.jpg-Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9Yd5Yd9.jpeg",
-    alt: "眠い状態",
-    threshold: 0.15,
-    audioSrc: "/sounds/sleepy.mp3",
-    audioText: "眠いわぁ",
   },
   {
     id: "excited",
@@ -186,10 +201,14 @@ export default function TodoApp() {
   // 達成順序を追跡するための状態
   const [completionOrder, setCompletionOrder] = useState<string[]>([])
 
+  // 病気状態を追跡するための状態
+  const [healthState, setHealthState] = useState<"healthy" | "sick" | "very-sick" | "recovering">("healthy")
+  const lastCompletionTimeRef = useRef<number>(Date.now())
+
   // キャラクター状態更新ロジック
   useEffect(() => {
     if (todos.length === 0) {
-      setCharacterStage(characterStages[0]) // 子供の状態
+      setCharacterStage(characterStages[0]) // 赤ちゃん状態
       return
     }
 
@@ -197,6 +216,29 @@ export default function TodoApp() {
     const completedTasks = todos.filter((todo) => todo.completed)
     const completedCount = completedTasks.length
     const completionRate = completedCount / todos.length
+
+    // 最後のタスク完了からの経過時間をチェック（長時間未完了の場合、病気になる）
+    const now = Date.now()
+    const daysSinceLastCompletion = (now - lastCompletionTimeRef.current) / (1000 * 60 * 60 * 24)
+
+    // 3日以上タスクを完了していない場合、病気状態に
+    if (completedCount > 0 && daysSinceLastCompletion > 3) {
+      if (healthState === "healthy") {
+        setHealthState("sick")
+      } else if (healthState === "sick" && daysSinceLastCompletion > 5) {
+        setHealthState("very-sick")
+      }
+    } else if (
+      completedCount > 0 &&
+      daysSinceLastCompletion < 1 &&
+      (healthState === "sick" || healthState === "very-sick")
+    ) {
+      // 病気状態から回復中
+      setHealthState("recovering")
+    } else if (healthState === "recovering" && completedCount > 2) {
+      // 回復中から健康に
+      setHealthState("healthy")
+    }
 
     // 6つのタスクが完了したかチェック
     if (completedCount === 6) {
@@ -210,21 +252,33 @@ export default function TodoApp() {
       setSevenTasksCompleted(false)
     }
 
+    // 健康状態に基づいて特定の画像を表示
+    if (healthState === "very-sick") {
+      setCharacterStage(characterStages[4]) // 重症状態
+      return
+    } else if (healthState === "sick") {
+      setCharacterStage(characterStages[3]) // 病気状態
+      return
+    } else if (healthState === "recovering") {
+      setCharacterStage(characterStages[5]) // 回復中状態
+      return
+    }
+
     // 達成率が0%の場合はお墓の状態に
     if (todos.length > 0 && completionRate === 0) {
-      setCharacterStage(characterStages[5]) // 墓石
+      setCharacterStage(characterStages[9]) // 墓石
       return
     }
 
     // 未完了のタスクが多すぎる場合は「死亡」状態に
     if (todos.length > 5 && completionRate < 0.2) {
-      setCharacterStage(characterStages[5]) // 墓石
+      setCharacterStage(characterStages[9]) // 墓石
       return
     }
 
     // タスクが5個以上完了しており、達成率が100%の時にウエディングドレスの写真を表示
     if (completedCount >= 5 && completionRate === 1.0) {
-      setCharacterStage(characterStages[4]) // 結婚式
+      setCharacterStage(characterStages[8]) // 結婚式
       return
     }
 
@@ -233,10 +287,10 @@ export default function TodoApp() {
 
     // 連続する完了タスクに基づいてキャラクターを選択
     if (consecutiveCompletedTasks >= 3) {
-      setCharacterStage(characterStages[8]) // 天才の状態
+      setCharacterStage(characterStages[12]) // 天才の状態
       return
     } else if (consecutiveCompletedTasks === 2) {
-      setCharacterStage(characterStages[7]) // 毒の状態
+      setCharacterStage(characterStages[11]) // 毒の状態
       return
     }
 
@@ -246,41 +300,46 @@ export default function TodoApp() {
       const lastCompletedIndex = todos.findIndex((todo) => todo.id === lastCompletedId)
 
       // 最後に完了したタスクのインデックスに基づいて異なる写真を表示
-      if (lastCompletedIndex % 5 === 0) {
-        setCharacterStage(characterStages[9]) // 驚きの状態
+      if (lastCompletedIndex % 6 === 0) {
+        setCharacterStage(characterStages[13]) // 驚きの状態
         return
-      } else if (lastCompletedIndex % 5 === 1) {
-        setCharacterStage(characterStages[10]) // 幸せな状態
+      } else if (lastCompletedIndex % 6 === 1) {
+        setCharacterStage(characterStages[14]) // 幸せな状態
         return
-      } else if (lastCompletedIndex % 5 === 2) {
-        setCharacterStage(characterStages[11]) // 混乱した状態
+      } else if (lastCompletedIndex % 6 === 2) {
+        setCharacterStage(characterStages[10]) // 怒りの状態
         return
-      } else if (lastCompletedIndex % 5 === 3) {
-        setCharacterStage(characterStages[12]) // 眠い状態
+      } else if (lastCompletedIndex % 6 === 3) {
+        setCharacterStage(characterStages[5]) // 回復中の状態
         return
-      } else if (lastCompletedIndex % 5 === 4) {
-        setCharacterStage(characterStages[13]) // 興奮した状態
+      } else if (lastCompletedIndex % 6 === 4) {
+        setCharacterStage(characterStages[15]) // 興奮した状態
+        return
+      } else if (lastCompletedIndex % 6 === 5) {
+        setCharacterStage(characterStages[7]) // とても健康な状態
         return
       }
     }
 
     // 完了率に基づいて適切なステージを選択
-    if (completionRate > 0 && completionRate < 0.2) {
-      setCharacterStage(characterStages[0]) // 子供の状態
+    if (completionRate > 0 && completionRate < 0.1) {
+      setCharacterStage(characterStages[0]) // 赤ちゃんの状態
+    } else if (completionRate >= 0.1 && completionRate < 0.2) {
+      setCharacterStage(characterStages[1]) // 子供の状態
     } else if (completionRate >= 0.2 && completionRate < 0.3) {
-      setCharacterStage(characterStages[1]) // 学生の状態
-    } else if (completionRate >= 0.3 && completionRate < 0.4) {
-      setCharacterStage(characterStages[6]) // 怒りの状態
-    } else if (completionRate >= 0.4 && completionRate < 0.5) {
-      setCharacterStage(characterStages[7]) // 毒の状態
+      setCharacterStage(characterStages[2]) // 学生の状態
+    } else if (completionRate >= 0.3 && completionRate < 0.45) {
+      setCharacterStage(characterStages[10]) // 怒りの状態
+    } else if (completionRate >= 0.45 && completionRate < 0.5) {
+      setCharacterStage(characterStages[11]) // 毒の状態
     } else if (completionRate >= 0.5 && completionRate < 0.6) {
-      setCharacterStage(characterStages[2]) // 健康な状態
+      setCharacterStage(characterStages[6]) // 健康な状態
     } else if (completionRate >= 0.6 && completionRate < 0.8) {
-      setCharacterStage(characterStages[8]) // 天才の状態
+      setCharacterStage(characterStages[12]) // 天才の状態
     } else if (completionRate >= 0.8) {
-      setCharacterStage(characterStages[3]) // とても健康な状態
+      setCharacterStage(characterStages[7]) // とても健康な状態
     }
-  }, [todos, completionOrder])
+  }, [todos, completionOrder, healthState])
 
   // 連続する完了タスクの数を取得する関数
   const getConsecutiveCompletedTasks = (todoList: Todo[]) => {
@@ -512,9 +571,10 @@ export default function TodoApp() {
       if (todo.id === id) {
         const newCompleted = !todo.completed
 
-        // 完了状態になった場合、達成順序に追加
+        // 完了状態になった場合、達成順序に追加し、最終完了時間を更新
         if (newCompleted && !todo.completed) {
           setCompletionOrder((prev) => [...prev, id])
+          lastCompletionTimeRef.current = Date.now()
         } else if (!newCompleted && todo.completed) {
           // 未完了に戻した場合、達成順序から削除
           setCompletionOrder((prev) => prev.filter((todoId) => todoId !== id))
